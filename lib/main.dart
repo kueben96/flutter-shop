@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
+      // use .value constructor when you use existing objects like Product in existing List
+      // but when you use objects that change like the Products List, use create and context
       create: (ctx) => Products(),
+      // all child widgets can now listen to Products()
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
