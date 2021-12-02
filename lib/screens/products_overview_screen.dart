@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/widgets/products_grid.dart';
-import '../models/products.dart';
 
 // Grid of Products
 

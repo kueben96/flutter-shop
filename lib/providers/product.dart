@@ -1,4 +1,8 @@
-class Product {
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+// add changeNotifier so that Products can notify the listeners when they are changed (e.g. isFavorite == true)
+class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
@@ -14,4 +18,9 @@ class Product {
       required this.price,
       required this.imageUrl,
       this.isFavorite = false});
+
+  void toggleFavStatus() {
+    isFavorite = !isFavorite;
+    notifyListeners();
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/products.dart';
+import 'product.dart';
 
 // add Mixin like extend (but the difference is that you merge the properties but you dont turn your class of an instance of the inherited class)
 
