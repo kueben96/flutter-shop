@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +13,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      // use .value constructor when you use existing objects like Product in existing List
-      // but when you use objects that change like the Products List, use create and context
-      create: (ctx) => Products(),
+    // group multiple providers together
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          // use .value constructor when you use existing objects like Product in existing List
+          // but when you use objects that change like the Products List, use create and context
+          create: (ctx) => Products(),
+        ),
+        ChangeNotifierProvider(create: (ctx) => Cart()),
+      ],
       // all child widgets can now listen to Products()
       child: MaterialApp(
         title: 'Flutter Demo',
