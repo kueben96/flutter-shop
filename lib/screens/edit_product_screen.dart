@@ -48,7 +48,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _saveForm() {
+    final isValid = _form.currentState!.validate();
+    if (!isValid) {
+      return;
+    }
+
     _form.currentState!.save();
+
     print(_editedProduct.title);
     print(_editedProduct.price);
     print(_editedProduct.description);
@@ -87,7 +93,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id);
                 },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please provide a value';
+                  }
+                  return null;
+                },
               ),
+              // Price Field
               TextFormField(
                 decoration: InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.numberWithOptions(
@@ -106,6 +119,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id);
                 },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please provide a value';
+                  } else if (num.tryParse(value) == null) {
+                    return 'Please provide a valid number!';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
@@ -120,6 +141,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       price: _editedProduct.price,
                       imageUrl: _editedProduct.imageUrl,
                       id: _editedProduct.id);
+                },
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please provide a value';
+                  }
+                  return null;
                 },
               ),
               // Image Preview
@@ -164,6 +191,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             price: _editedProduct.price,
                             imageUrl: value,
                             id: _editedProduct.id);
+                      },
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide a value';
+                        } else if (Uri.tryParse(value)?.isAbsolute == false) {
+                          return 'Please provide a valid URL';
+                        }
+                        return null;
                       },
                     ),
                   )
