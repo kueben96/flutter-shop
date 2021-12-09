@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_app/providers/product.dart';
+import 'package:shop_app/providers/products.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
@@ -61,11 +63,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
 
     _form.currentState!.save();
-
-    print(_editedProduct.title);
-    print(_editedProduct.price);
-    print(_editedProduct.description);
-    print(_editedProduct.imageUrl);
+    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    // Go back to the last page after saving
+    Navigator.of(context).pop();
   }
 
   @override
@@ -206,6 +206,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             imageUrl: value,
                             id: _editedProduct.id);
                       },
+                      // instead regex also possible
+                      // var urlPattern = r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
+                      // var result = new RegExp(urlPattern, caseSensitive: false).firstMatch('https://www.google.com');
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please provide a value';
