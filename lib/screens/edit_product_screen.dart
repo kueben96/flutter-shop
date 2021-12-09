@@ -27,10 +27,45 @@ class _EditProductScreenState extends State<EditProductScreen> {
   var _editedProduct =
       Product(id: '', title: '', description: '', price: 0, imageUrl: '');
 
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'price': '',
+    'imageUrl': '',
+  };
+  var _isInit = true;
+
   void initState() {
     // point to function to tell flutter to execute the function when focus changes
     _imageUrlFocusNode.addListener(_uppdateImageUrl);
     super.initState();
+  }
+
+  // to load products from list for editing by id
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      // id is passed as argument from user_product_item on Click
+      final productId = ModalRoute.of(context)!.settings.arguments as String;
+      // ignore: unnecessary_null_comparison
+      if (productId != null) {
+        final product =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = product;
+        // for populating the edit screen
+        _initValues = {
+          'title': _editedProduct.title,
+          'description': _editedProduct.description,
+          'price': _editedProduct.price.toString(),
+          'imageUrl': ''
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+
+    _isInit = false;
+    super.didChangeDependencies();
   }
 
   // dispose focus nodes after usage to free up the memory
@@ -63,7 +98,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
 
     _form.currentState!.save();
-    Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    // difference update and add
+    if (_editedProduct.id != null) {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      // add
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+    }
+
     // Go back to the last page after saving
     Navigator.of(context).pop();
   }
@@ -85,6 +128,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           child: ListView(
             children: <Widget>[
               TextFormField(
+                initialValue: _initValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
                 // move focus from title input to price input
@@ -98,7 +142,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       description: _editedProduct.description,
                       price: _editedProduct.price,
                       imageUrl: _editedProduct.imageUrl,
-                      id: _editedProduct.id);
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite);
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -109,6 +154,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               ),
               // Price Field
               TextFormField(
+                initialValue: _initValues['price'],
                 decoration: InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.numberWithOptions(
                     signed: true, decimal: true),
@@ -124,7 +170,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       description: _editedProduct.description,
                       price: double.parse(value),
                       imageUrl: _editedProduct.imageUrl,
-                      id: _editedProduct.id);
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite);
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -140,6 +187,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 },
               ),
               TextFormField(
+                initialValue: _initValues['description'],
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
@@ -151,7 +199,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       description: value,
                       price: _editedProduct.price,
                       imageUrl: _editedProduct.imageUrl,
-                      id: _editedProduct.id);
+                      id: _editedProduct.id,
+                      isFavorite: _editedProduct.isFavorite);
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -204,7 +253,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
                             description: _editedProduct.description,
                             price: _editedProduct.price,
                             imageUrl: value,
-                            id: _editedProduct.id);
+                            id: _editedProduct.id,
+                            isFavorite: _editedProduct.isFavorite);
                       },
                       // instead regex also possible
                       // var urlPattern = r"(https?|ftp)://([-A-Z0-9.]+)(/[-A-Z0-9+&@#/%=~_|!:,.;]*)?(\?[A-Z0-9+&@#/%=~_|!:‌​,.;]*)?";
