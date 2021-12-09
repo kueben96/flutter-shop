@@ -43,6 +43,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _uppdateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
+      if (_imageUrlController.text.isEmpty ||
+          (Uri.tryParse(_imageUrlController.text)?.isAbsolute == false) ||
+          (!_imageUrlController.text.endsWith('.png') &&
+              !_imageUrlController.text.endsWith('.jpg') &&
+              !_imageUrlController.text.endsWith('.jpeg'))) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -122,8 +129,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please provide a value';
-                  } else if (num.tryParse(value) == null) {
+                  }
+                  if (num.tryParse(value) == null) {
                     return 'Please provide a valid number!';
+                  }
+                  if (double.parse(value) <= 0) {
+                    return 'Enter price greater then 0';
                   }
                   return null;
                 },
@@ -145,6 +156,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Please provide a value';
+                  }
+                  if (value.length < 10) {
+                    return 'Please enter description longer than 10 chars';
                   }
                   return null;
                 },
@@ -195,8 +209,14 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return 'Please provide a value';
-                        } else if (Uri.tryParse(value)?.isAbsolute == false) {
+                        }
+                        if (Uri.tryParse(value)?.isAbsolute == false) {
                           return 'Please provide a valid URL';
+                        }
+                        if (!value.endsWith('.png') &&
+                            !value.endsWith('.jpg') &&
+                            !value.endsWith('.jpeg')) {
+                          return 'Please enter a URL with an image file';
                         }
                         return null;
                       },
