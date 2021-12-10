@@ -39,6 +39,5 @@ class Badge extends StatelessWidget {
         )
       ],
     );
-    ;
   }
 }

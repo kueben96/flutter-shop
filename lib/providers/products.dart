@@ -70,7 +70,8 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  addProduct(Product product) {
+  void addProduct(Product product) {
+    print("add pro");
     final newProduct = Product(
       title: product.title,
       price: product.price,

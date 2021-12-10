@@ -12,8 +12,7 @@ class ProductsGrid extends StatelessWidget {
     // to which type of data shall the provider listen? <Products>
     final productsData = Provider.of<Products>(context);
     final products = showFavs ? productsData.favItems : productsData.items;
-    print('Show favs');
-    print(showFavs);
+
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: products.length,

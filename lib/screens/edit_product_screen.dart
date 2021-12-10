@@ -47,7 +47,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       // id is passed as argument from user_product_item on Click
-      final productId = ModalRoute.of(context)!.settings.arguments as String;
+      //final productId = ModalRoute.of(context)!.settings.arguments as String;
+      final productId = ModalRoute.of(context)!.settings.arguments as String?;
       // ignore: unnecessary_null_comparison
       if (productId != null) {
         final product =
@@ -99,11 +100,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     _form.currentState!.save();
     // difference update and add
-    if (_editedProduct.id != null) {
+
+    if (_editedProduct.id != "") {
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
     } else {
       // add
+      print('add product invoked');
       Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
 
