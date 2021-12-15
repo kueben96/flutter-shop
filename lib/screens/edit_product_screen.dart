@@ -120,7 +120,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
       print('add product invoked');
       Provider.of<Products>(context, listen: false)
           .addProduct(_editedProduct)
-          .then((_) {
+          .catchError((error) {
+        return showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              title: Text('Error occured'),
+              content: Text(' ${error.toString()} occured'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Okay'),
+                )
+              ]),
+        );
+      }).then((_) {
         setState(() {
           _isLoading = false;
         });

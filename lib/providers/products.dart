@@ -87,6 +87,7 @@ class Products with ChangeNotifier {
         'isFavorite': product.isFavorite
       }),
     )
+        // when future succeeds -> run then
         .then((response) {
       var res = json.decode(response.body);
 
@@ -99,6 +100,9 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
+    }).catchError((error) {
+      // throw new error to use it in other place
+      throw error;
     }).then((value) => Future.delayed(Duration(seconds: 1)));
   }
 
