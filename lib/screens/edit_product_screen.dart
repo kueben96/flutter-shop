@@ -17,7 +17,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   // text editing controller to preview the image before the form is submitted
-  final _imageUrlController = TextEditingController();
+  final _imageUrlController = TextEditingController(
+      text:
+          "https://fivmagazine.de/wp-content/uploads/2021/07/about-you-kendall-jenner-kollektion-sommer-close-up-Frau-topmodel-shooting-los-angeles-enges-kleid-organge-rot-auto-gelb-buesche-pose.jpg");
+
   final _imageUrlFocusNode = FocusNode();
 
   // key to access form
@@ -25,13 +28,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   // Product
   var _editedProduct =
-      Product(id: '', title: '', description: '', price: 0, imageUrl: '');
+      Product(id: '', title: '', description: '', price: 0, imageUrl: "");
 
   var _initValues = {
     'title': '',
     'description': '',
     'price': '',
-    'imageUrl': '',
+    'imageUrl': "",
   };
   var _isInit = true;
 
@@ -59,7 +62,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
-          'imageUrl': ''
+          //'imageUrl': ''
+          'imageUrl': ""
         };
         _imageUrlController.text = _editedProduct.imageUrl;
       }
