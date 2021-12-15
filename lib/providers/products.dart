@@ -73,22 +73,21 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
+    // async automatically returns future so you dont need .then()
     const url =
         "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json";
     // returns a future which can be accessed from outside of the class
-    return await http
-        .post(
-      url,
-      body: json.encode({
-        'title': product.title,
-        'description': product.description,
-        'price': product.price,
-        'imageUrl': product.imageUrl,
-        'isFavorite': product.isFavorite
-      }),
-    )
-        // when future succeeds -> run then
-        .then((response) {
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite
+        }),
+      );
       var res = json.decode(response.body);
 
       final newProduct = Product(
@@ -100,10 +99,11 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    }).catchError((error) {
+    } catch (error) {
       // throw new error to use it in other place
       throw error;
-    }).then((value) => Future.delayed(Duration(seconds: 1)));
+    }
+    // when future succeeds -> run then
   }
 
   void updateProduct(String id, Product newProduct) {
