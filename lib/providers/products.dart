@@ -75,7 +75,8 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     const url =
         "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json";
-    var response = await http
+    // returns a future which can be accessed from outside of the class
+    return await http
         .post(
       url,
       body: json.encode({
@@ -98,7 +99,7 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    });
+    }).then((value) => Future.delayed(Duration(seconds: 1)));
   }
 
   void updateProduct(String id, Product newProduct) {
