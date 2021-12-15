@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/badge.dart';
@@ -17,6 +18,24 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyFavorites = false;
+  var _isInit = true;
+  @override
+  void initState() {
+    //Provider.of<Products>(context).fetchAndSetProducts(); WON'T WORK
+    // Future.delayed(Duration.zero).then((_) {
+    //   Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    // });
+    super.initState();
+  }
+
+  // runs after init but before build of widgets
+  // only run if inits initial and set false later so it newer runs again
+  @override
+  void didChangeDependencies() {
+    Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Scaffold for the whole screen incl. AppBar

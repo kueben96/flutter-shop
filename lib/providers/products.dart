@@ -49,6 +49,7 @@ class Products with ChangeNotifier {
     // if (_showFavoritesOnly) {
     //   return _items.where((prodItem) => prodItem.isFavorite).toList();
     // }
+
     return [..._items];
   }
 
@@ -119,5 +120,16 @@ class Products with ChangeNotifier {
   void deleteProduct(String id) {
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
+  }
+
+  Future<void> fetchAndSetProducts() async {
+    const url =
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json";
+    try {
+      final response = await http.get(url);
+      print(json.decode(response.body));
+    } catch (error) {
+      throw error;
+    }
   }
 }
