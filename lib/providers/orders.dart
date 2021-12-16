@@ -39,17 +39,38 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrderHttp(List<CartItem> cartProducts, double total) async {
+    final timestamp = DateTime.now();
+
     final url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders";
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders.json";
 
     final response = await http.post(url,
         body: json.encode({
           'amount': total,
-          'products': cartProducts,
-          'dateTime': DateTime.now(),
+          'products': cartProducts
+              .map((cp) => {
+                    'id': cp.id,
+                    'title': cp.title,
+                    'price': cp.price,
+                    'quantity': cp.quantity,
+                  })
+              .toList(),
+          'dateTime': timestamp.toIso8601String(),
         }));
     var res = json.decode(response.body);
     print(res);
+    _orders.insert(
+      0,
+      OrderItem(
+        id: res['name'],
+        amount: total,
+        products: cartProducts,
+        dateTime: DateTime.now(),
+      ),
+    );
+    _orders.forEach((element) {
+      print(element.toString());
+    });
     notifyListeners();
   }
 }
