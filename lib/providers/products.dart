@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import "package:http/http.dart" as http;
 import 'package:flutter/material.dart';
+import 'package:shop_app/models/http_exception.dart';
 import 'product.dart';
 
 // add Mixin like extend (but the difference is that you merge the properties but you dont turn your class of an instance of the inherited class)
@@ -128,8 +129,46 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+  Future<void> deleteProduct(String id) async {
+    print('delete prod invoked');
+    final url =
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.jon";
+    // copy item before deleting
+    final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
+    Product? existingProduct = _items[existingProductIndex];
+
+    var exProd = existingProduct;
+    //_items.removeAt(existingProductIndex);
+    await http.delete(url).then((response) {
+      print('items in request mode');
+      _items.forEach((element) {
+        print(element.title);
+      });
+      if (response.statusCode >= 400) {
+        throw HttpException('Could not delete product');
+      } else {
+        existingProduct = null;
+        _items.removeAt(existingProductIndex);
+        print('***** items after successful delete');
+        _items.forEach((element) {
+          print(element.title);
+        });
+      }
+      print('*** response status');
+      print(response.statusCode);
+    }).catchError((_) {
+      //var existingProduct2 = existingProduct;
+      //print(exProd.title);
+      print('items in error mode');
+      //_items.insert(existingProductIndex, exProd);
+      _items.forEach((element) {
+        print(element.title);
+      });
+
+      // re-insert into the list if removal fails
+      print('Error occured');
+    });
+    //_items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 
