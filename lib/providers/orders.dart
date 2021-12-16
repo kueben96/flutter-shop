@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:http/http.dart' as http;
 
 class OrderItem {
   final String id;
@@ -32,6 +35,21 @@ class Orders with ChangeNotifier {
         dateTime: DateTime.now(),
       ),
     );
+    notifyListeners();
+  }
+
+  Future<void> addOrderHttp(List<CartItem> cartProducts, double total) async {
+    final url =
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders";
+
+    final response = await http.post(url,
+        body: json.encode({
+          'amount': total,
+          'products': cartProducts,
+          'dateTime': DateTime.now(),
+        }));
+    var res = json.decode(response.body);
+    print(res);
     notifyListeners();
   }
 }
