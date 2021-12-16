@@ -136,39 +136,17 @@ class Products with ChangeNotifier {
     // copy item before deleting
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     Product? existingProduct = _items[existingProductIndex];
-
     var exProd = existingProduct;
-    //_items.removeAt(existingProductIndex);
-    await http.delete(url).then((response) {
-      print('items in request mode');
-      _items.forEach((element) {
-        print(element.title);
-      });
-      if (response.statusCode >= 400) {
-        throw HttpException('Could not delete product');
-      } else {
-        existingProduct = null;
-        _items.removeAt(existingProductIndex);
-        print('***** items after successful delete');
-        _items.forEach((element) {
-          print(element.title);
-        });
-      }
-      print('*** response status');
-      print(response.statusCode);
-    }).catchError((_) {
-      //var existingProduct2 = existingProduct;
-      //print(exProd.title);
-      print('items in error mode');
-      //_items.insert(existingProductIndex, exProd);
-      _items.forEach((element) {
-        print(element.title);
-      });
 
-      // re-insert into the list if removal fails
-      print('Error occured');
-    });
-    //_items.removeWhere((prod) => prod.id == id);
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      // makes more sense to me
+      //_items.insert(existingProductIndex, existingProduct);
+
+      throw HttpException('Could not delete product');
+    }
+    existingProduct = null;
+    _items.removeAt(existingProductIndex);
     notifyListeners();
   }
 
