@@ -60,6 +60,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
+          'creatorId': userId,
         }),
       );
       var res = json.decode(response.body);
@@ -122,9 +123,12 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAndSetProducts() async {
+  // with square brackets positional arguments are optional :)
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json?auth=$authToken";
+        'https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(url);
       final productData = json.decode(response.body) as Map<String, dynamic>;
