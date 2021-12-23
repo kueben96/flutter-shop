@@ -20,8 +20,13 @@ class OrderItem {
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
   final String authToken;
+  final String userId;
 
-  Orders(this.authToken, this._orders);
+  Orders(
+    this.authToken,
+    this.userId,
+    this._orders,
+  );
 
   // to prevent editing orders from outside the class
   List<OrderItem> get orders {
@@ -43,7 +48,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken";
     final response = await http.get(url);
     print(json.decode(response.body));
     // helper list
@@ -71,7 +76,7 @@ class Orders with ChangeNotifier {
     final timestamp = DateTime.now();
 
     final url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders.json?auth=$authToken";
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken";
 
     final response = await http.post(url,
         body: json.encode({
