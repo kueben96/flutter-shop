@@ -2,49 +2,21 @@ import 'dart:convert';
 import "package:http/http.dart" as http;
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/http_exception.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'product.dart';
 
 // add Mixin like extend (but the difference is that you merge the properties but you dont turn your class of an instance of the inherited class)
 
 class Products with ChangeNotifier {
   // _items shouldnt be accessible from outside (underscore makes private)
-  List<Product> _items = [
-    //   Product(
-    //     id: 'p1',
-    //     title: 'Red Shirt',
-    //     description: 'A red shirt - it is pretty red!',
-    //     price: 29.99,
-    //     imageUrl:
-    //         'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
-    //   ),
-    //   Product(
-    //     id: 'p2',
-    //     title: 'Trousers',
-    //     description: 'A nice pair of trousers.',
-    //     price: 59.99,
-    //     imageUrl:
-    //         'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
-    //   ),
-    //   Product(
-    //     id: 'p3',
-    //     title: 'Yellow Scarf',
-    //     description: 'Warm and cozy - exactly what you need for the winter.',
-    //     price: 19.99,
-    //     imageUrl:
-    //         'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
-    //   ),
-    //   Product(
-    //     id: 'p4',
-    //     title: 'A Pan',
-    //     description: 'Prepare any meal you want.',
-    //     price: 49.99,
-    //     imageUrl:
-    //         'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-    //   ),
-  ];
+  List<Product> _items = [];
 
   // Don't manage shwoing the favorites inside the class globally but locally inside the widgets
   // var _showFavoritesOnly = false;
+
+  final String authToken;
+
+  Products(this.authToken, this._items);
 
   List<Product> get items {
     // if (_showFavoritesOnly) {
@@ -132,7 +104,7 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     print('delete prod invoked');
     final url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.jon";
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.json";
     // copy item before deleting
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     Product? existingProduct = _items[existingProductIndex];
@@ -151,8 +123,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    const url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json";
+    final url =
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json?auth=$authToken";
     try {
       final response = await http.get(url);
       final productData = json.decode(response.body) as Map<String, dynamic>;

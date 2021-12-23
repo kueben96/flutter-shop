@@ -1,15 +1,24 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop_app/models/http_exception.dart';
 
 class Auth with ChangeNotifier {
   late String _token;
-  late DateTime _expiryDate;
+  late DateTime _expiryDate = DateTime.now();
   late String _userId;
+
+  bool get isAuth {
+    return token != null;
+  }
+
+  String? get token {
+    if (_expiryDate.isAfter(DateTime.now())) {
+      return _token;
+    }
+    return null;
+  }
 
   Future<void> _authenticate(
       String email, String password, String urlSegment) async {
@@ -29,10 +38,15 @@ class Auth with ChangeNotifier {
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
       }
-
       responseData = responseData as Map<String, dynamic>;
+      _token = responseData['idToken'];
+      _userId = responseData['localId'];
+      _expiryDate = DateTime.now()
+          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
       print('test print');
-      print(responseData['idToken']);
+      print(responseData['expiresIn']);
+      print(DateTime.now());
+      print(_expiryDate);
       // responseData.forEach((key, value) {
       //   print(key);
       //   print(value);
@@ -43,6 +57,7 @@ class Auth with ChangeNotifier {
     } catch (error) {
       throw error;
     }
+    notifyListeners();
   }
 
   Future<void> signup(

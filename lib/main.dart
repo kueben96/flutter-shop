@@ -22,34 +22,41 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // group multiple providers together
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          // use .value constructor when you use existing objects like Product in existing List
-          // but when you use objects that change like the Products List, use create and context
-          create: (ctx) => Products(),
-        ),
-        ChangeNotifierProvider(create: (ctx) => Cart()),
-        ChangeNotifierProvider(create: (ctx) => Orders()),
-        ChangeNotifierProvider.value(
-          value: Auth(),
-        ),
-      ],
-      // all child widgets can now listen to Products()
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-            primarySwatch: Colors.purple,
-            accentColor: Colors.deepOrange,
-            fontFamily: 'Lato'),
-        home: AuthScreen(),
-        routes: {
-          ProducDetailScreen.routeName: (ctx) => ProducDetailScreen(),
-          CartScreen.routeName: (context) => CartScreen(),
-          OrdersScreen.routeName: (context) => OrdersScreen(),
-          UserProductsScreen.routeName: (context) => UserProductsScreen(),
-          EditProductScreen.routeName: (context) => EditProductScreen(),
-        },
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider(create: (ctx) => Auth()),
+          ChangeNotifierProvider(create: (ctx) => Cart()),
+          ChangeNotifierProvider(create: (ctx) => Orders()),
+          ChangeNotifierProxyProvider<Auth, Products>(
+              create: (_) => Products('', []),
+              update: (ctx, auth, previousProducts) =>
+                  // ignore: unnecessary_null_comparison
+                  Products(auth.token!, previousProducts.items))
+
+          // ChangeNotifierProvider(
+          //   // use .value constructor when you use existing objects like Product in existing List
+          //   // but when you use objects that change like the Products List, use create and context
+          //   create: (ctx) => Products(),
+          // ),
+        ],
+        // all child widgets can now listen to the providers
+        // build widget tree based on auth
+        child: Consumer<Auth>(
+          builder: (context, auth, _) => MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+                primarySwatch: Colors.purple,
+                accentColor: Colors.deepOrange,
+                fontFamily: 'Lato'),
+            home: auth.isAuth ? ProductOverviewScreen() : AuthScreen(),
+            //home: AuthScreen(),
+            routes: {
+              ProducDetailScreen.routeName: (ctx) => ProducDetailScreen(),
+              CartScreen.routeName: (context) => CartScreen(),
+              OrdersScreen.routeName: (context) => OrdersScreen(),
+              UserProductsScreen.routeName: (context) => UserProductsScreen(),
+              EditProductScreen.routeName: (context) => EditProductScreen(),
+            },
+          ),
+        ));
   }
 }
