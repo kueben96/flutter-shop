@@ -10,14 +10,14 @@ class Auth with ChangeNotifier {
   late String _userId;
 
   bool get isAuth {
-    return token != null;
+    return token != "";
   }
 
-  String? get token {
+  String get token {
     if (_expiryDate.isAfter(DateTime.now())) {
       return _token;
     }
-    return null;
+    return "";
   }
 
   String get userId {
@@ -75,5 +75,12 @@ class Auth with ChangeNotifier {
   Future<void> signIn(String email, String password) async {
     var urlSegment = "signInWithPassword";
     return _authenticate(email, password, urlSegment);
+  }
+
+  void logout() {
+    _token = "";
+    _userId = "";
+    _expiryDate = DateTime.now();
+    notifyListeners();
   }
 }
