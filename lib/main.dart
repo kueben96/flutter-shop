@@ -25,12 +25,17 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (ctx) => Auth()),
           ChangeNotifierProvider(create: (ctx) => Cart()),
-          ChangeNotifierProvider(create: (ctx) => Orders()),
+          ChangeNotifierProxyProvider<Auth, Orders>(
+            create: (_) => Orders('', []),
+            update: (ctx, auth, previousOrders) =>
+                Orders(auth.token!, previousOrders.orders),
+          ),
+
           ChangeNotifierProxyProvider<Auth, Products>(
-              create: (_) => Products('', []),
-              update: (ctx, auth, previousProducts) =>
-                  // ignore: unnecessary_null_comparison
-                  Products(auth.token!, previousProducts.items))
+            create: (_) => Products('', []),
+            update: (ctx, auth, previousProducts) =>
+                Products(auth.token!, previousProducts.items),
+          ),
 
           // ChangeNotifierProvider(
           //   // use .value constructor when you use existing objects like Product in existing List

@@ -48,8 +48,8 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     // async automatically returns future so you dont need .then()
-    const url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json";
+    final url =
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products.json?auth=$authToken";
     // returns a future which can be accessed from outside of the class
     try {
       final response = await http.post(
@@ -84,7 +84,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
-          "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.json";
+          "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken";
 
       await http.patch(url,
           body: json.encode({
@@ -104,7 +104,7 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     print('delete prod invoked');
     final url =
-        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.json";
+        "https://flutter-shop-app-94a3c-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken";
     // copy item before deleting
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     Product? existingProduct = _items[existingProductIndex];
